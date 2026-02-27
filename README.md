@@ -127,7 +127,7 @@ If metrics cannot be computed due to insufficient data, warnings are emitted and
 
 ### Example Dashboard
 
-![Figure1]()
+![Figure1](https://github.com/Fazizzz/Canadian-equity-dashboard/blob/main/sample-outputs/Sample-output.png)
 
 *Figure 1: TSX Composite Index (`^GSPTSE`, 1-year period) dashboard illustrating index-level price trend with 50-day and 200-day moving averages, trading volume, daily returns, and 30-day annualized rolling volatility. Summary statistics include total return, CAGR, annualized volatility, and maximum drawdown over the selected horizon.*
 
