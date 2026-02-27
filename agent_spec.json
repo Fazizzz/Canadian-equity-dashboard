@@ -1,0 +1,113 @@
+{
+  "project_name": "canadian-equity-dashboard",
+  "description": "TSX-focused time-series analytics tool that generates interactive HTML dashboards for Canadian equities using yfinance and Plotly.",
+  "scope": {
+    "exchange_focus": "TSX",
+    "default_suffix": ".TO",
+    "index_exception": "Tickers beginning with '^' must not be modified (e.g., ^GSPTSE).",
+    "non_goals": [
+      "No web scraping",
+      "No US equity support",
+      "No web app or API layer",
+      "No machine learning components"
+    ]
+  },
+  "inputs": {
+    "ticker": {
+      "description": "Canadian ticker symbol. If no suffix is provided, append .TO.",
+      "examples": ["RY", "ENB", "SHOP.TO", "^GSPTSE"]
+    },
+    "period": {
+      "description": "yfinance period string",
+      "default": "5y",
+      "examples": ["1y", "5y", "max"]
+    },
+    "out_html": {
+      "description": "Output HTML file path"
+    }
+  },
+  "core_functions": [
+    "normalize_canadian_ticker(ticker: str) -> str",
+    "max_drawdown(series: pd.Series) -> float",
+    "compute_metrics(df: pd.DataFrame) -> dict",
+    "build_dashboard_html(ticker: str, period: str, out_html: str) -> str"
+  ],
+  "mathematical_definitions": {
+    "total_return": "(last_close / first_close) - 1",
+    "years": "days_between_endpoints / 365.25",
+    "cagr": "((1 + total_return) ** (1 / years)) - 1",
+    "annualized_volatility": "std(daily_returns) * sqrt(252)",
+    "max_drawdown": "min((cumprod(1 + r) / cummax(cumprod(1 + r))) - 1)",
+    "trading_days_per_year": 252
+  },
+  "visual_constraints": {
+    "subplot_structure": "4 stacked panels using make_subplots(rows=4, cols=1, shared_xaxes=True, vertical_spacing=0.06)",
+    "subplot_titles": [
+      "Close Price (with 50/200D MA)",
+      "Volume",
+      "Daily Returns",
+      "Rolling Volatility (30D, annualized)"
+    ],
+    "template": "presentation",
+    "height": 1000,
+    "margins": {
+      "top": 90,
+      "bottom": 40,
+      "left": 80,
+      "right": 30
+    },
+    "y_axis_labels": [
+      "Price (CAD)",
+      "Volume (Shares)",
+      "Daily Return",
+      "Volatility (Annualized)"
+    ],
+    "y_axis_title_font_size": 15,
+    "html_export": "write_html(include_plotlyjs='cdn')"
+  },
+  "robustness_requirements": [
+    "If yfinance returns empty data, raise ValueError",
+    "If insufficient data exists to compute metrics, emit warnings",
+    "If a metric evaluates to NaN or infinite, display 'N/A' in summary annotation",
+    "Do not crash when metrics cannot be computed"
+  ],
+  "repository_structure": {
+    "src": [
+      "src/dashboard.py",
+      "src/__init__.py"
+    ],
+    "scripts": [
+      "scripts/run_dashboard.py"
+    ],
+    "root_files": [
+      "environment.yml",
+      "agent_spec.json",
+      "README.md",
+      ".gitignore",
+      "LICENSE"
+    ],
+    "generated_outputs": "outputs/ (ignored by git)"
+  },
+  "environment": {
+    "python_version": ">=3.10",
+    "package_manager": "conda",
+    "environment_file": "environment.yml",
+    "required_packages": [
+      "numpy",
+      "pandas",
+      "plotly",
+      "yfinance"
+    ]
+  },
+  "cli_usage": {
+    "command_example": "python scripts/run_dashboard.py --ticker RY --period 5y",
+    "expected_result": "Standalone interactive HTML dashboard saved to outputs/"
+  },
+  "acceptance_criteria": [
+    "Running CLI with valid TSX ticker produces HTML dashboard",
+    "Dashboard contains 4 panels with correct traces",
+    "Summary annotation includes ticker, date range, and computed metrics",
+    "Metrics are mathematically consistent with definitions",
+    "Warnings are issued instead of crashes when edge cases occur"
+  ]
+}
